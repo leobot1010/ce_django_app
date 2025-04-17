@@ -1,0 +1,46 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Django
+*.log
+*.pot
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+# Virtual Environments
+.env
+.venv/
+env/
+venv/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.sublime-*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Testing and Coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.pytest_cache/
+
+# Build and Distribution
+build/
+dist/
+*.manifest
+*.spec
+
+
+# Miscellaneous
+*.bak
+*.swp
+*.swo
