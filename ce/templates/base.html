@@ -1,0 +1,66 @@
+<!--{% load widget_tweaks tags %}-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %} CE App {% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="p-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+         <div class="container-fluid">
+             <a class="navbar-brand" href="{% url 'home' %}">CE App</a>
+
+             <div class="collapse navbar-collapse" id="navbarNav">
+                 <ul class="navbar-nav ms-auto">
+                    <!-- Participants Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="participantsDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                           Participants
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="participantsDropdown">
+                          <li><a class="dropdown-item" href="{% url 'add_participants' %}">Add Participant</a></li>
+                          <li><a class="dropdown-item" href="{% url 'view_participants' %}">View Participants</a></li>
+                          <li><a class="dropdown-item" href="{% url 'holiday_summary' %}">Holidays</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="schemeDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                           Scheme
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="schemeDropdown">
+                          <li><a class="dropdown-item" href="{% url 'scheme' %}">Scheme Details</a></li>
+                          <li><a class="dropdown-item" href="{% url 'edit_scheme' %}">Edit Scheme Details</a></li>
+                          <li><a class="dropdown-item" href="{% url 'edit_departments' %}">Edit Departments </a></li>
+                        </ul>
+                    </li>
+                </ul>
+             </div>
+         </div>
+    </nav>
+
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

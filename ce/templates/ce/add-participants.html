@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load widget_tweaks tags %}
+{% block title %}Add Participant{% endblock %}
+{% block content %}
+
+<h1 class="mb-4">Add Participant</h1>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+            <p class="mb-0">{{ error }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+        <!-- First Name -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+            {% if form.first_name.errors %}
+                {{ form.first_name|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
+            {% else %}
+                {{ form.first_name|add_class:"form-control" }}
+            {% endif %}
+        </div>
+
+        <!-- Last Name -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+            {% if form.last_name.errors %}
+                {{ form.last_name|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
+            {% else %}
+                {{ form.last_name|add_class:"form-control" }}
+            {% endif %}
+        </div>
+
+        <!-- PPS Number -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.ppsn.id_for_label }}" class="form-label">PPS Number</label>
+            {% if form.ppsn.errors %}
+                {{ form.ppsn|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.ppsn.errors.0 }}</div>
+            {% else %}
+                {{ form.ppsn|add_class:"form-control" }}
+            {% endif %}
+        </div>
+
+        <!-- Department -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
+            {% if form.department.errors %}
+                {{ form.department|add_class:"form-select is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.department.errors.0 }}</div>
+            {% else %}
+                {{ form.department|add_class:"form-select" }}
+            {% endif %}
+        </div>
+
+        <!-- Address -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+            {% if form.address.errors %}
+                {{ form.address|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.address.errors.0 }}</div>
+            {% else %}
+                {{ form.address|add_class:"form-control" }}
+            {% endif %}
+        </div>
+
+        <!-- Birth Date -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.birth_date.id_for_label }}" class="form-label">Date of Birth</label>
+            {% if form.birth_date.errors %}
+                {{ form.birth_date|add_class:"form-control is-invalid"|attr:"type:date" }}
+                <div class="invalid-feedback d-block">{{ form.birth_date.errors.0 }}</div>
+            {% else %}
+                {{ form.birth_date|add_class:"form-control"|attr:"type:date" }}
+            {% endif %}
+        </div>
+
+        <!-- Scheme Start Date -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.scheme_start_date.id_for_label }}" class="form-label">Scheme Start Date</label>
+            {% if form.scheme_start_date.errors %}
+                {{ form.scheme_start_date|add_class:"form-control is-invalid"|attr:"type:date" }}
+                <div class="invalid-feedback d-block">{{ form.scheme_start_date.errors.0 }}</div>
+            {% else %}
+                {{ form.scheme_start_date|add_class:"form-control"|attr:"type:date" }}
+            {% endif %}
+        </div>
+
+        <!-- Phone -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.phone.id_for_label }}" class="form-label">Mobile</label>
+            {% if form.phone.errors %}
+                {{ form.phone|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>
+            {% else %}
+                {{ form.phone|add_class:"form-control" }}
+            {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+            {% if form.email.errors %}
+                {{ form.email|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+            {% else %}
+                {{ form.email|add_class:"form-control" }}
+            {% endif %}
+        </div>
+
+        <!-- Emergency Phone -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.emerg_phone.id_for_label }}" class="form-label">Emergency Phone Number</label>
+            {% if form.emerg_phone.errors %}
+                {{ form.emerg_phone|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.emerg_phone.errors.0 }}</div>
+            {% else %}
+                {{ form.emerg_phone|add_class:"form-control" }}
+            {% endif %}
+        </div>
+
+        <!-- Manual Start Date -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.manual_start_date.id_for_label }}" class="form-label">
+                Manual Handling Date
+                {% if form.manual_start_date.help_text %}
+                    {% info_icon form.manual_start_date.help_text %}
+                {% endif %}
+            </label>
+            {% if form.manual_start_date.errors %}
+                {{ form.manual_start_date|add_class:"form-control is-invalid"|attr:"type:date" }}
+                <div class="invalid-feedback d-block">{{ form.manual_start_date.errors.0 }}</div>
+            {% else %}
+                {{ form.manual_start_date|add_class:"form-control"|attr:"type:date" }}
+            {% endif %}
+        </div>
+
+        <!-- Bank IBAN -->
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.bank_iban.id_for_label }}" class="form-label">Bank IBAN</label>
+            {% if form.bank_iban.errors %}
+                {{ form.bank_iban|add_class:"form-control is-invalid" }}
+                <div class="invalid-feedback d-block">{{ form.bank_iban.errors.0 }}</div>
+            {% else %}
+                {{ form.bank_iban|add_class:"form-control" }}
+            {% endif %}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% block extra_js %}
+<script>
+    setTimeout(function () {
+        const alert = document.querySelector(".alert.alert-success");
+        if (alert) {
+            alert.classList.remove("show");  // Triggers Bootstrap fade
+            setTimeout(() => {
+                alert.remove();  // Completely removes it from the DOM
+            }, 500);  // Wait a bit to let fade-out animation complete
+        }
+    }, 3000);  // Wait 3 seconds before starting fade
+</script>
+{% endblock %}
+
+
+{% endblock %}

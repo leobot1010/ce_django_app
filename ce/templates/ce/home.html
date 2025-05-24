@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <div class="text-center">
+    <h2 class="mb-4">Welcome to the CE Scheme Admin System</h2>
+    <p class="lead">Please choose an action below:</p>
+
+    <div class="d-grid gap-3 col-6 mx-auto">
+      <a href="{% url 'add_participants' %}" class="btn btn-outline-primary btn-lg">Add Participants</a>
+      <a href="{% url 'view_participants' %}" class="btn btn-outline-secondary btn-lg">View Participants</a>
+      <a href="{% url 'edit_departments' %}" class="btn btn-outline-warning btn-lg">Edit Departments</a>
+      <a href="{% url 'edit_scheme' %}" class="btn btn-outline-info btn-lg">Edit Scheme Info</a>
+    </div>
+  </div>
+{% endblock %}
