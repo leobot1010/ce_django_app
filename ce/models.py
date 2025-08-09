@@ -1,49 +1,20 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-import re
 from datetime import date
-from django.core.validators import RegexValidator
-from .utils import generate_app_code, calculate_project_end
-from datetime import timedelta
+from typing import Any
+from django.contrib.auth.models import User
+from ce.utils.validators_utils import validate_ppsn, validate_iban, numeric_validator
+from .utils.scheme_utils import generate_app_code
+from .utils.project_utils import calculate_project_dates
 from decimal import Decimal, ROUND_HALF_UP
 from django.db.models import Sum
-
-
-""" -----------------------------------  VALIDATORS -------------------------------------------------------------- """
-
-# Validate the Phone Number
-numeric_validator = RegexValidator(regex=r'^\d+$', message='Enter a valid phone number (digits only).')
-
-
-# Validate the PPN Number
-def validate_ppsn(ppsn):
-    pattern = r'^\d{7}[A-Z]{1,2}$'
-    if not re.match(pattern, ppsn):
-        raise ValidationError('PPS Number is not valid, please check and re-enter.')
-
-
-# Validate the Bank IBAN
-def validate_iban(iban):
-    # Remove all whitespace characters (spaces, tabs, etc.)
-    cleaned = re.sub(r"\s+", "", iban.upper())
-
-    # Irish IBAN regex (strictly for Ireland)
-    pattern = r"^IE\d{2}[A-Z]{4}\d{14}$"
-
-    if re.match(pattern, cleaned):
-        return True, cleaned
-    else:
-        raise ValidationError('IBAN is not valid, please check and re-enter.')
-
-
-"""----------------------------------------------------------------------------------------------------------------- """
-""" ---------------------------------------  MODELS  --------------------------------------------------------------- """
 
 
 """ ------------------------------------- SCHEME MODEL ------------------------------------------------------------- """
 
 
 class Scheme(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)                                 # CE Scheme name
     county = models.CharField(max_length=50)                                # County
     address = models.TextField()                                            # Address
@@ -57,7 +28,7 @@ class Scheme(models.Model):
         blank=True,
         related_name='active_schemes'
     )
-    use_departments = models.BooleanField(default=True)                     # Toggle on/off departments
+    departments_disabled = models.BooleanField(default=True)                # Toggle on/off departments
     created_on = models.DateField(auto_now_add=True)                        # CE Scheme sign-up data
 
     def __str__(self):
@@ -72,13 +43,15 @@ class Scheme(models.Model):
 
         super().save(*args, **kwargs)
 
+    objects: Any  # type: ignore
 
-""" ------------------------------------- PROJECT MODEL ------------------------------------------------------------"""
+
+""" -------------------------------------- PROJECT MODEL ----------------------------------------------------------"""
 
 
 class Project(models.Model):
     scheme = models.ForeignKey('Scheme', on_delete=models.CASCADE, related_name='projects')
-    number = models.PositiveIntegerField(help_text="eg. 20, 21, 21")
+    number = models.PositiveIntegerField(help_text="e.g. 20, 21, 21")
     start_date = models.DateField()
     end_date = models.DateField()
 
@@ -92,9 +65,14 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         # Only auto-calculate end date if it's not already set
         if self.start_date and not self.end_date:
-            self.end_date = calculate_project_end(self.start_date)
-
+            self.end_date = calculate_project_dates(self.start_date)[0]
         super().save(*args, **kwargs)
+
+    def clean(self):
+        if self.start_date and self.start_date.weekday() != 0:  # 0 = Monday
+            raise ValidationError("Project start date must be a Monday.")
+
+    objects: Any  # type: ignore
 
 
 """ ------------------------------------- DEPARTMENT MODEL ------------------------------------------------------- """
@@ -109,6 +87,8 @@ class Department(models.Model):
 
     def __str__(self):
         return self.name
+
+    objects: Any  # type: ignore
 
 
 """ ------------------------------------ PARTICIPANT MODEL -------------------------------------------------------- """
@@ -173,6 +153,8 @@ class Participant(models.Model):
         validators=[validate_iban],
         verbose_name='Bank IBAN'
     )
+
+    objects: Any  # type: ignore
 
     # ---------------------------------- METHODS --------------------------------- #
 

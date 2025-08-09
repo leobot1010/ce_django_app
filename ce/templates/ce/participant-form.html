@@ -3,7 +3,7 @@
 {% block title %}Add Participant{% endblock %}
 {% block content %}
 
-<h1 class="mb-4">Add Participant</h1>
+<h1 class="mb-4">{{ form_title }}</h1>
 
 {% if messages %}
     {% for message in messages %}
@@ -163,7 +163,7 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn-teal btn-teal-large mt-2">Submit</button>
 </form>
 
 {% block extra_js %}

@@ -1,6 +1,352 @@
 {% extends "base.html" %}
-{% block title %}Scheme Info{% endblock %}
+{% block title %}View Participants{% endblock %}
 
 {% block content %}
-<h1> View Participants</h1>
+<h2>Participants Details {{ scheme.name }}</h2>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+
+
+<!--------------------------------------------------- SEARCH BOX -------------------------------------------------->
+
+<div class="search-wrap mb-4" style="position:relative; max-width:720px;">
+  <input
+    id="participantSearch"
+    class="form-control"
+    type="text"
+    placeholder="Search by name or PPS…"
+    autocomplete="off"
+    aria-autocomplete="list"
+    aria-controls="participantResults"
+    aria-expanded="false"
+    role="combobox"
+    style="font-size:1.1rem; padding:.65rem .9rem;"
+  >
+  <div id="participantResults" class="results" role="listbox" aria-label="Participants"
+       style="position:absolute; top:100%; left:0; right:0; z-index:1000; background:#fff;
+       border:1px solid #dee2e6; border-top:none; border-radius:0 0 .5rem .5rem;
+       box-shadow:0 .25rem .75rem rgba(0,0,0,.08); max-height:320px; overflow-y:auto; display:none;">
+  </div>
+</div>
+
+
+<!--------------------------------------------- TABLE OF PARTICIPANTS ----------------------------------------------->
+
+{% if participants %}
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th style="width: 150px">Name</th>
+        <th style="width: 120px">PPSN</th>
+        <th style="width: 140px">Date of Birth</th>
+        <th style="width: 250px">Address</th>
+        <th style="width: 120px">Start Date</th>
+        <th style="width: 120px">Finish Date</th>
+        <th style="width: 80px">More</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in participants %}
+        <!-- Main row -->
+        <tr id="participant-{{ p.id }}" data-bs-toggle="collapse" data-bs-target="#details-{{ p.id }}" class="clickable-row">
+          <td>{{ p.first_name }} {{ p.last_name }}</td>
+          <td>{{ p.ppsn }}</td>
+          <td>{{ p.birth_date|date:"M. j, Y" }}</td>
+          <td>{{ p.address }}</td>
+          <td>{{ p.scheme_start_date|date:"M. j, Y" }}</td>
+          <td>{{ p.scheme_finish_date|date:"M. j, Y" }}</td>
+          <td><span style="color: #2c7a7b;">▼</span></td>
+
+        </tr>
+
+        <!--------------------------------- Expanded Row ----------------------------------------->
+
+        <tr class="collapse" id="details-{{ p.id }}">
+          <td colspan="7">
+            <div class="p-3 details-box rounded">
+              <div class="d-flex mb-3">
+                <div class="me-3 fw-bold">Email:</div>
+                <div>{{ p.email }}</div>
+              </div>
+              <div class="d-flex mb-3">
+                <div class="me-3 fw-bold">Emergency Phone:</div>
+                <div>{{ p.emerg_phone }}</div>
+              </div>
+              <div class="d-flex mb-3">
+                <div class="me-3 fw-bold">Manual Start Date:</div>
+                <div>{{ p.manual_start_date }}</div>
+              </div>
+              <div class="d-flex mb-3">
+                <div class="me-3 fw-bold">Manual Finish Date:</div>
+                <div>{{ p.manual_finish_date }}</div>
+              </div>
+              <div class="d-flex mb-1">
+                <div class="me-3 fw-bold">Bank IBAN:</div>
+                <div>{{ p.bank_iban }}</div>
+              </div>
+
+              <!-------------------------------- Edit Buttons ---------------------------->
+
+              <div class="d-flex gap-2 mt-4">
+                <a href="{% url 'edit_participants' p.id %}"
+                   class="btn-plain edit-participant-btn">
+                  <i class="bi bi-pencil-square"></i> Edit
+                </a>
+                <a href="{% url 'edit_participant_dates' p.id %}"
+                   class="btn-plain edit-dates-btn">
+                  <i class="bi bi-calendar-event"></i> Dates
+                </a>
+              </div>
+
+
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No participants added yet.</p>
+{% endif %}
+
+
+<!-- -------------------------------------- --------CSS STYLING ---------------------------------------------------->
+
+<!------------------ EDIT AND DELETE BUTTONS -------------->
+
+<style>
+
+/* Base: plain, compact, no jump */
+.edit-participant-btn  {
+  padding: 2px 6px;
+  font-size: .9rem;
+  border: 0;
+  background: rgba(44,122,123,.10);
+  color: #212529;
+  border-radius: .4rem;
+  transition: background-color .15s ease, color .15s ease;
+  text-decoration: none; /* removes underline */
+}
+
+.edit-dates-btn  {
+  padding: 2px 6px;
+  font-size: .9rem;
+  border: 0;
+  background: rgba(255,152,0,.12);
+  color: #212529;
+  border-radius: .4rem;
+  transition: background-color .15s ease, color .15s ease;
+  text-decoration: none; /* removes underline */
+}
+
+.btn-plain i { margin-right: .3rem; }
+
+/* Edit = teal accent */
+.edit-participant-btn { color: #2c7a7b; }
+.edit-participant-btn:hover { background: rgba(44,122,123,.10); }
+
+/* Dates = amber accent */
+.edit-dates-btn { color: #ff9800; }
+.edit-dates-btn:hover { background: rgba(255,152,0,.12); }
+
+/* Paint the expanded row background immediately (no delay) */
+table.table tbody tr.collapsing,
+table.table tbody tr.collapse,
+table.table tbody tr.collapse.show {
+  background-color: #f7fbff !important; /* or #fafafa */
+}
+
+/* Keep the cells clear so the TR color shows edge-to-edge; remove top gap */
+table.table tbody tr.collapsing > td,
+table.table tbody tr.collapse > td,
+table.table tbody tr.collapse.show > td {
+  background-color: transparent !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
+
+
+
+/* ----------------------- SEARCH RESULTS DROPDOWN --------------------- */
+
+  /* Search dropdown items */
+  .result-item { padding:.6rem .9rem; cursor:pointer; border-top:1px solid #f2f2f2; }
+  .result-item:first-child { border-top:none; }
+  .result-item:hover, .result-item.active { background:#e9f2ff; }
+  .result-name { font-size:1.1rem; font-weight:600; line-height:1.2; }
+  .result-pps  { font-size:.95rem; color:#6c757d; }
+  .no-results  { padding:.75rem .9rem; color:#6c757d; font-style:italic; }
+
+
+
+/* ----------------------- TABLE STYLING --------------------- */
+
+/* Zebra striping for clickable rows */
+table.table tbody tr.clickable-row:nth-of-type(odd) > td,
+table.table tbody tr.clickable-row:nth-of-type(odd) > th {
+  background-color: #eef6ff !important;
+}
+table.table tbody tr.clickable-row:nth-of-type(even) > td,
+table.table tbody tr.clickable-row:nth-of-type(even) > th {
+  background-color: #ffffff !important;
+}
+
+/* Expanded detail rows: always plain white */
+table.table tbody tr.collapse,
+table.table tbody tr.collapse.show {
+  background: transparent !important;
+}
+table.table tbody tr.collapse > td,
+table.table tbody tr.collapse.show > td {
+  background-color: #ffffff !important;
+}
+
+/* Pointer only on clickable main rows */
+table.table tbody tr.clickable-row { cursor: pointer; }
+table.table tbody tr.collapse      { cursor: default; }
+
+/* Expanded row background */
+table.table tbody tr.collapse.collapsing > td,
+table.table tbody tr.collapse.show > td {
+  background-color: #fafafa !important; /* or blue tint if you prefer */
+}
+
+/* Hover highlight */
+table.table tbody tr.clickable-row:hover > td,
+table.table tbody tr.clickable-row:hover > th {
+  background-color: #cce5ff !important;
+}
+
+/* --- Expanded row: constant background, no hover --- */
+table.table tbody tr.collapse > td,
+table.table tbody tr.collapse.show > td,
+table.table tbody tr.collapse:hover > td {
+  background-color: #f7fbff !important;  /* your subtle expanded tint */
+  padding-top: 0 !important;              /* avoid tiny gap */
+  border-top: 0 !important;
+}
+
+/* --- Zebra striping ONLY on main clickable rows (ignore collapse rows) --- */
+table.table tbody tr.clickable-row:nth-child(odd of .clickable-row)  > td { background-color: #eef6ff !important; }
+table.table tbody tr.clickable-row:nth-child(even of .clickable-row) > td { background-color: #ffffff !important; }
+
+/* --- Hover on main rows (override zebra) --- */
+table.table tbody tr.clickable-row:hover > td { background-color: #cce5ff !important; }
+
+/* Cursors */
+table.table tbody tr.clickable-row { cursor: pointer; }
+table.table tbody tr.collapse      { cursor: default; }
+
+/* Speed up Bootstrap collapse transition */
+.collapsing {
+  transition: height 0.10s ease !important; /* default is 0.35s */
+}
+
+/* very gentle hover, only on main rows */
+table.table tbody tr.clickable-row:hover > td {
+  background-color: #eaf3ff !important; /* barely darker than #eef6ff */
+}
+
+
+</style>
+
+<!-- ---------------------------------------------- JAVASCRIPT --------------------------------------------------->
+{% block extra_js %}
+<script>
+  // Auto-hide success message after 3s (your existing behavior)
+  setTimeout(function () {
+    const alert = document.querySelector('.alert.alert-success');
+    if (alert) {
+      alert.classList.remove('show');
+      setTimeout(() => alert.remove(), 500);
+    }
+  }, 3000);
+
+  // ----------------------- SEARCH: jump to row -----------------------
+  (function () {
+    // Build a compact array for searching
+    const participants = [
+      {% for p in participants %}
+        { id: "{{ p.id }}", name: "{{ p.first_name|escapejs }} {{ p.last_name|escapejs }}", pps: "{{ p.ppsn|default:''|escapejs }}" }
+        {% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ];
+
+    const input = document.getElementById('participantSearch');
+    const panel = document.getElementById('participantResults');
+
+    let activeIndex = -1, currentItems = [], debounceTimer = null;
+
+    const norm = s => (s || '').toLowerCase().trim();
+    const show = on => { panel.style.display = on ? 'block' : 'none'; input.setAttribute('aria-expanded', on ? 'true' : 'false'); };
+
+    function render(items) {
+      panel.innerHTML = ''; activeIndex = -1; currentItems = items;
+      if (!items.length) { panel.innerHTML = '<div class="no-results">No matches</div>'; show(true); return; }
+      const frag = document.createDocumentFragment();
+      items.forEach((p, i) => {
+        const el = document.createElement('div');
+        el.className = 'result-item'; el.setAttribute('role','option'); el.dataset.index = i; el.dataset.id = p.id;
+        el.innerHTML = `<div class="result-name">${p.name}</div><div class="result-pps">(PPS: ${p.pps || 'N/A'})</div>`;
+        el.addEventListener('mousedown', e => { e.preventDefault(); jumpTo(i); });
+        frag.appendChild(el);
+      });
+      panel.appendChild(frag); show(true);
+    }
+
+    function filter(q) {
+      const t = norm(q);
+      if (!t) { show(false); return; }
+      const items = participants.filter(p => norm(p.name).includes(t) || norm(p.pps).includes(t)).slice(0, 50);
+      render(items);
+    }
+
+    function setActive(i) {
+      const rows = panel.querySelectorAll('.result-item');
+      rows.forEach(r => r.classList.remove('active'));
+      if (i >= 0 && i < rows.length) { rows[i].classList.add('active'); activeIndex = i; rows[i].scrollIntoView({ block:'nearest' }); }
+    }
+
+    function jumpTo(i) {
+      const item = currentItems[i]; if (!item) return;
+      const target = document.getElementById('participant-' + item.id);
+      if (target) {
+        // open details if collapsed
+        const details = document.getElementById('details-' + item.id);
+        if (details && !details.classList.contains('show')) {
+          // toggle open by simulating a click on the row (keeps your collapse logic)
+          target.click();
+        }
+        target.scrollIntoView({ behavior:'smooth', block:'center' });
+        target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
+      }
+      show(false); input.blur();
+    }
+
+    input.addEventListener('input', function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => filter(this.value), 120);
+    });
+    input.addEventListener('focus', function () { if (this.value) filter(this.value); });
+    input.addEventListener('blur', function () { setTimeout(() => show(false), 120); });
+
+    input.addEventListener('keydown', function (e) {
+      const rows = panel.querySelectorAll('.result-item'); if (!rows.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIndex + 1, rows.length - 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIndex - 1, 0)); }
+      else if (e.key === 'Enter') { if (activeIndex >= 0) { e.preventDefault(); jumpTo(activeIndex); } }
+      else if (e.key === 'Escape') { show(false); }
+    });
+  })();
+</script>
+{% endblock %}
+
+<!-- ------------------------------------------------------------------------------------>
 {% endblock %}

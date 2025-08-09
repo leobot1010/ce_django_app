@@ -15,8 +15,8 @@ class SchemeForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'rows': 2})
     )
 
-    use_departments = forms.BooleanField(
-        label="We don't use Departments",
+    departments_disabled = forms.BooleanField(
+        label="Disable Departments",
         required=False,
         initial=True
     )
@@ -25,7 +25,7 @@ class SchemeForm(forms.ModelForm):
         model = Scheme
 
         fields = [
-            'name', 'county', 'address', 'gov_code', 'current_project', 'use_departments'
+            'name', 'county', 'address', 'gov_code', 'current_project', 'departments_disabled'
         ]
 
         labels = {
@@ -35,15 +35,15 @@ class SchemeForm(forms.ModelForm):
             'gov_code': 'Official DSP Code',
             'current_proj_no': 'Current Project Number',
             'current_proj_start': 'Start Date of Current Project',
-            'use_departments': "We don't use departments",
+            'departments_disabled': "We don't use departments",
         }
 
     def clean(self):
         cleaned_data = super().clean()
-        use_departments = cleaned_data.get("use_departments") or False
+        departments_disabled = cleaned_data.get("departments_disabled") or False
         new_departments = cleaned_data.get("new_departments")
 
-        if use_departments and new_departments:
+        if departments_disabled and new_departments:
             raise forms.ValidationError(
                 "You cannot enter departments and also select 'We don't use departments'. "
                 "Please uncheck the box or leave the department names."
@@ -88,5 +88,22 @@ class DepartmentForm(forms.ModelForm):
     class Meta:
         model = Department
         fields = ['name']
+
+
+class ParticipantDateForm(forms.ModelForm):
+    class Meta:
+        model = Participant
+        fields = [
+            'scheme_start_date',
+            'manual_start_date',
+            'scheme_finish_date',
+            'manual_finish_date',
+        ]
+        widgets = {
+            'scheme_start_date': forms.DateInput(attrs={'type': 'date'}),
+            'manual_start_date': forms.DateInput(attrs={'type': 'date'}),
+            'scheme_finish_date': forms.DateInput(attrs={'type': 'date'}),
+            'manual_finish_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 

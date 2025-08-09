@@ -6,4 +6,5 @@ urlpatterns = [
     path('', lambda request: redirect('home')),
     path('admin/', admin.site.urls),
     path('', include('ce.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

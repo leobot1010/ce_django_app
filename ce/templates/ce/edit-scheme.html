@@ -18,6 +18,8 @@
 
     <form method="POST">
         {% csrf_token %}
+
+        <!-- ----------------------- Scheme Name --------------------- -->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="{{ form.name.id_for_label }}" class="form-label">Scheme Name</label>
@@ -25,6 +27,7 @@
             </div>
         </div>
 
+         <!-- --------------------  Scheme Gov Code ------------------- -->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="{{ form.gov_code.id_for_label }}" class="form-label">Scheme Code</label>
@@ -32,40 +35,34 @@
             </div>
         </div>
 
+        <!-- ------------------------  County ------------------------ -->
         <div class="col-md-6 mb-4">
             <label for="{{ form.county.id_for_label }}" class="form-label">County</label>
             {{ form.county|add_class:"form-select" }}
         </div>
 
+        <!-- ---------------------  Local Address --------------------- -->
         <div class="col-md-6 mb-4">
             <label for="{{ form.address.id_for_label }}" class="form-label">Local Address (excl. County)</label>
             {{ form.address|add_class:"form-control" }}
         </div>
 
-        <div class="col-md-6 mb-4">
-            <label for="{{ form.current_proj_no.id_for_label }}" class="form-label">Current Project Number</label>
-            {{ form.current_proj_no|add_class:"form-control" }}
-        </div>
-
-        <div class="col-md-6 mb-5">
-            <label for="{{ form.current_proj_start.id_for_label }}" class="form-label">Current Project Start Date</label>
-            {{ form.current_proj_start|add_class:"form-control"|attr:"type:date" }}
-        </div>
-
+        <!-- -------------------  Departments Text Area ----------------- -->
         <div class="mb-4">
             <label for="{{ form.new_departments.id_for_label }}" class="form-label">{{ form.new_departments.label }}</label>
             {{ form.new_departments|add_class:"form-control" }}
             <small class="text-muted">Separate multiple department names with commas.</small>
         </div>
 
-
+        <!-- -------------------  Departments Check Box ----------------- -->
         <div class="form-check mb-3">
-            {{ form.use_departments|add_class:"form-check-input" }}
-            <label class="form-check-label" for="{{ form.use_departments.id_for_label }}">
-                {{ form.use_departments.label }}
+            {{ form.departments_disabled|add_class:"form-check-input" }}
+            <label class="form-check-label" for="{{ form.departments_disabled.id_for_label }}">
+                {{ form.departments_disabled.label }}
             </label>
         </div>
 
+        <!-- -----------------------  Save Button ---------------------- -->
         <div class="text-center">
             <button type="submit" class="btn btn-primary mt-3">Save</button>
         </div>
